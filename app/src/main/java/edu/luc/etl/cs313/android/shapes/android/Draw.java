@@ -32,10 +32,14 @@ public class Draw implements Visitor<Void> {
 
     @Override
     public Void onLocation(final Location l) {
-        canvas.save();
+        // Translate forward into local coordinate space
         canvas.translate(l.getX(), l.getY());
+
+        // Draw contained shape(s)
         l.getShape().accept(this);
-        canvas.restore();
+
+        // Translate back (reverse transform)
+        canvas.translate(-l.getX(), -l.getY());
         return null;
     }
 
@@ -50,7 +54,7 @@ public class Draw implements Visitor<Void> {
     @Override
     public Void onFill(final Fill f) {
         Style originalStyle = paint.getStyle();
-        paint.setStyle(Style.FILL);
+        paint.setStyle(Style.FILL_AND_STROKE);
         f.getShape().accept(this);
         paint.setStyle(originalStyle);
         return null;
