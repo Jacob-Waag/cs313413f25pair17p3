@@ -15,6 +15,9 @@ public class BoundingBox implements Visitor<Location> {
 
     @Override
     public Location onLocation(final Location l) {
+        if (l.getShape() == null) {
+            throw new IllegalStateException("Location shape cannot be null");
+        }
         Location inner = l.getShape().accept(this);
         if (inner == null) {
             throw new IllegalStateException("Inner shape bounding box cannot be null");
@@ -38,6 +41,8 @@ public class BoundingBox implements Visitor<Location> {
 
         for (Shape s : g.getShapes()) {
             Location loc = s.accept(this);
+            if (loc == null) continue;
+
             Rectangle rect = (Rectangle) loc.getShape();
 
             int currLeft = loc.getX();
@@ -51,27 +56,42 @@ public class BoundingBox implements Visitor<Location> {
             bottom = Math.max(bottom, currBottom);
         }
 
+        if (left == Integer.MAX_VALUE || top == Integer.MAX_VALUE) {
+            return new Location(0, 0, new Rectangle(0, 0));
+        }
         return new Location(left, top, new Rectangle(right - left, bottom - top));
     }
 
     @Override
     public Location onFill(Fill f) {
-        return f.getShape().accept(this);
+        if (f.getShape() == null) {
+            return new Location(0, 0, new Rectangle(0, 0));
+        }
+        Location loc = f.getShape().accept(this);
+        return loc != null ? loc : new Location(0, 0, new Rectangle(0, 0));
     }
 
     @Override
     public Location onStrokeColor(final StrokeColor c) {
-        return c.getShape().accept(this);
+        if (c.getShape() == null) {
+            return new Location(0, 0, new Rectangle(0, 0));
+        }
+        Location loc = c.getShape().accept(this);
+        return loc != null ? loc : new Location(0, 0, new Rectangle(0, 0));
     }
 
     @Override
     public Location onOutline(final Outline o) {
-        return o.getShape().accept(this);
+        if (o.getShape() == null) {
+            return new Location(0, 0, new Rectangle(0, 0));
+        }
+        Location loc = o.getShape().accept(this);
+        return loc != null ? loc : new Location(0, 0, new Rectangle(0, 0));
     }
 
     @Override
     public Location onPolygon(final Polygon p) {
-        if (p.getPoints().isEmpty()) {
+        if (p.getPoints() == null || p.getPoints().isEmpty()) {
             return new Location(0, 0, new Rectangle(0, 0));
         }
 
