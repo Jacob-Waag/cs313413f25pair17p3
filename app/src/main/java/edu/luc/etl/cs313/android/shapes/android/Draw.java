@@ -95,13 +95,17 @@ public class Draw implements Visitor<Void> {
         List<? extends Point> pts = p.getPoints();
         if (pts == null || pts.size() < 2) return null;
 
-        Path path = new Path();
-        path.moveTo(pts.get(0).getX(), pts.get(0).getY());
-        for (int i = 1; i < pts.size(); i++) {
-            path.lineTo(pts.get(i).getX(), pts.get(i).getY());
+        float[] lines = new float[pts.size() * 4]; // Each line: startX, startY, endX, endY
+        for (int i = 0; i < pts.size(); i++) {
+            Point start = pts.get(i);
+            Point end = pts.get((i + 1) % pts.size()); // Wrap around for closing
+            lines[i * 4] = start.getX();
+            lines[i * 4 + 1] = start.getY();
+            lines[i * 4 + 2] = end.getX();
+            lines[i * 4 + 3] = end.getY();
         }
-        path.close();
-        canvas.drawPath(path, paint);
+        canvas.drawLines(lines, paint);
         return null;
     }
+
 }
