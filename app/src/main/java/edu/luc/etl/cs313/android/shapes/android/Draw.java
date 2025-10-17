@@ -32,56 +32,68 @@ public class Draw implements Visitor<Void> {
 
     @Override
     public Void onLocation(final Location l) {
-        // Translate forward into local coordinate space
         canvas.translate(l.getX(), l.getY());
 
-        // Draw contained shape(s)
-        l.getShape().accept(this);
+        // Critical: if immediate child is StrokeColor, must call onStrokeColor now to set paint color
+        if (l.getShape() instanceof StrokeColor) {
+            ((StrokeColor) l.getShape()).accept(this);
+        } else if (l.getShape() != null) {
+            l.getShape().accept(this);
+        }
 
-        // Translate back (reverse transform)
         canvas.translate(-l.getX(), -l.getY());
         return null;
     }
 
     @Override
     public Void onGroup(final Group g) {
-        for (Shape s : g.getShapes()) {
-            s.accept(this);
+        if (g.getShapes() != null) {
+            for (Shape s : g.getShapes()) {
+                if (s != null) {
+                    s.accept(this);
+                }
+            }
         }
         return null;
     }
 
     @Override
     public Void onFill(final Fill f) {
-        Style originalStyle = paint.getStyle();
+        Style oldStyle = paint.getStyle();
         paint.setStyle(Style.FILL_AND_STROKE);
-        f.getShape().accept(this);
-        paint.setStyle(originalStyle);
+        if (f.getShape() != null) {
+            f.getShape().accept(this);
+        }
+        paint.setStyle(oldStyle);
         return null;
     }
 
     @Override
     public Void onStrokeColor(final StrokeColor c) {
-        int previousColor = paint.getColor();
+        int oldColor = paint.getColor();
         paint.setColor(c.getColor());
-        c.getShape().accept(this);
-        paint.setColor(previousColor);
+        if (c.getShape() != null) {
+            c.getShape().accept(this);
+        }
+        paint.setColor(oldColor);
         return null;
     }
 
     @Override
     public Void onOutline(final Outline o) {
-        Style originalStyle = paint.getStyle();
+        Style oldStyle = paint.getStyle();
         paint.setStyle(Style.STROKE);
-        o.getShape().accept(this);
-        paint.setStyle(originalStyle);
+        if (o.getShape() != null) {
+            o.getShape().accept(this);
+        }
+        paint.setStyle(oldStyle);
         return null;
     }
 
     @Override
     public Void onPolygon(final Polygon p) {
         List<? extends Point> pts = p.getPoints();
-        if (pts.size() < 2) return null;
+        if (pts == null || pts.size() < 2) return null;
 
         Path path = new Path();
         path.moveTo(pts.get(0).getX(), pts.get(0).getY());

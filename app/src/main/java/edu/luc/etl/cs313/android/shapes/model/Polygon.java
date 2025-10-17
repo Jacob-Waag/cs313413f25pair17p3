@@ -4,7 +4,6 @@ import java.util.List;
 
 /**
  * A special case of a group consisting only of Points.
- *
  */
 public final class Polygon extends Group {
 
@@ -19,7 +18,6 @@ public final class Polygon extends Group {
 
     @Override
     public <Result> Result accept(final Visitor<Result> v) {
-        // TODO your job
-        return null;
+        return v.onPolygon(this);
     }
 }
