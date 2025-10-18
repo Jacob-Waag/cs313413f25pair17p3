@@ -7,6 +7,9 @@ import android.graphics.Path;
 import edu.luc.etl.cs313.android.shapes.model.*;
 import java.util.List;
 
+// Visitor implementation
+// each shape accepts this visitor so Draw can call the right method
+
 public class Draw implements Visitor<Void> {
 
     private final Canvas canvas;

@@ -1,5 +1,9 @@
 package edu.luc.etl.cs313.android.shapes.android;
 
+// custom Android View that displays a Shape scene.
+// uses the Visitor pattern to:
+// - compute the shape's bounding box using BoundingBox visitor
+// - draw the shape on the Canvas using Draw visitor
 import edu.luc.etl.cs313.android.shapes.model.*;
 import android.annotation.SuppressLint;
 import android.content.Context;

@@ -1,5 +1,11 @@
 package edu.luc.etl.cs313.android.shapes.model;
 
+// this Visitor computes the smallest rectangle that fully contains a Shape.
+// it works by visiting each shape type and returning a Location object that
+// holds the bounding rectangle and its top-left corner.
+
+// used by DrawWidget to center or fit drawings on screen.
+
 public class BoundingBox implements Visitor<Location> {
 
     @Override
