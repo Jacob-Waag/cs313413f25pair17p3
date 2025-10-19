@@ -1,4 +1,4 @@
-package edu.luc.etl.cs313.android.shapes.model;\
+package edu.luc.etl.cs313.android.shapes.model;
 
 // this Visitor counts how many Shape objects exist in a structure.
 // each shape type contributes a count value that gets combined
